@@ -1,0 +1,47 @@
+{
+  "ui": {
+    "analyze": "Analyze",
+    "history": "History",
+    "tipsTitle": "Practical Tips for Farmers",
+    "upload": "Drag & Drop or Click to Upload Image",
+    "remove": "Remove",
+    "downloadReport": "Download Report",
+    "confidence": "Confidence"
+  },
+  "classes": {
+    "Healthy": {
+      "name": "Healthy",
+      "description": "The plant looks healthy (class: Healthy).",
+      "recommendations": [
+        "Continue routine care and monitoring.",
+        "Avoid overwatering and ensure good light."
+      ]
+    },
+    "backend/PlantVillage/Potato___Early_blight": {
+      "name": "Potato___Early_blight",
+      "description": "Potato___Early_blight affects leaves and causes spots.",
+      "recommendations": [
+        "Remove infected leaves.",
+        "Use recommended fungicide as per label.",
+        "Rotate crops next season."
+      ]
+    }
+  },
+  "generic": {
+    "healthy": {
+      "description": "The plant looks healthy.",
+      "recommendations": [
+        "Continue routine care and monitoring.",
+        "Avoid overwatering."
+      ]
+    },
+    "disease": {
+      "description": "Predicted disease detected. Please inspect and consider local extension services.",
+      "recommendations": [
+        "Isolate affected plants.",
+        "Remove severely infected leaves and dispose safely.",
+        "Consult local extension or plant pathology resources for treatment."
+      ]
+    }
+  }
+}

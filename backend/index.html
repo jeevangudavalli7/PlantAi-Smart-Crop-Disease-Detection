@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlantAI — Plant Disease Detector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 font-sans leading-normal text-gray-800">
+  <!-- NAV -->
+  <nav class="bg-green-700 text-white sticky top-0 z-50 shadow">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="text-2xl font-bold">🌱 PlantAI</div>
+        <div class="hidden md:flex gap-4 text-sm">
+          <a href="#home" class="hover:underline">Home</a>
+          <a href="#about" class="hover:underline">About</a>
+          <a href="#details" class="hover:underline">Details</a>
+          <a href="#analyze-section" class="hover:underline">Analyze</a>
+          <a href="#tips" class="hover:underline">Tips</a>
+          <a href="#history" class="hover:underline" id="nav-history">History</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- language selector -->
+        <select id="lang-select" class="bg-white text-green-700 px-2 py-1 rounded-md text-sm">
+          <option value="en">English</option>
+          <option value="te">తెలుగు</option>
+          <option value="ta">தமிழ்</option>
+          <option value="hi">हिंदी</option>
+        </select>
+
+        <button id="open-history" class="bg-white text-green-700 px-3 py-1 rounded-md text-sm" data-i18n="ui.history">History</button>
+        <a href="#analyze-section" class="bg-white text-green-700 px-3 py-1 rounded-md text-sm" data-i18n="ui.analyze">Analyze</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO / HOME -->
+  <section id="home" class="py-16 text-center bg-green-100">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-green-800 mb-4">PlantAI — Smart Crop Disease Detection</h1>
+    <p class="max-w-3xl mx-auto text-gray-700 text-lg">
+      Your smart AI-based prototype to detect crop diseases from leaf images and get simple, actionable remedies. Built with the farmer in mind: intuitive, fast, and practical.
+    </p>
+    <div class="mt-6">
+      <a href="#analyze-section" class="inline-block bg-green-700 text-white px-6 py-3 rounded-full shadow">Get started — Analyze a leaf</a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="py-12 max-w-4xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-green-700 mb-4 text-center">About PlantAI</h2>
+    <p class="text-gray-700 mb-3">
+      "Your challenge is to develop a smart AI-based prototype that detects crop diseases from leaf images and suggests simple, actionable remedies for farmers. The system should be intuitive, accurate, and built with the end-user—the farmer—in mind."
+    </p>
+    <p class="text-gray-700">PlantAI focuses on practical suggestions a farmer can implement quickly: identification, confidence scoring, short remediation steps, and a simple report they can save or share with an advisor.</p>
+  </section>
+
+  <!-- DETAILS / HOW IT WORKS -->
+  <section id="details" class="py-12 bg-green-100">
+    <div class="max-w-5xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-center text-green-700 mb-6">How it works</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl p-6 shadow text-center">
+          <h4 class="font-semibold text-green-700 mb-2">1. Capture or Upload</h4>
+          <p class="text-sm text-gray-600">Take a clear photo of the leaf or upload from your gallery.</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow text-center">
+          <h4 class="font-semibold text-green-700 mb-2">2. AI Detection</h4>
+          <p class="text-sm text-gray-600">Our model analyzes the leaf, identifies possible disease(s), and returns a confidence score.</p>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow text-center">
+          <h4 class="font-semibold text-green-700 mb-2">3. Simple Remedies</h4>
+          <p class="text-sm text-gray-600">Get step-by-step, low-cost recommendations tailored for smallholder farmers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALYZE SECTION -->
+  <section id="analyze-section" class="py-12">
+    <div class="max-w-2xl mx-auto px-4">
+      <div class="bg-white p-6 rounded-2xl shadow-xl">
+        <h2 class="text-2xl font-bold text-green-700 text-center mb-4">🌱 <span id="analyze-title">Analyze a Leaf</span></h2>
+
+        <!-- Upload controls -->
+        <div id="image-uploader" class="border-2 border-dashed border-green-400 p-6 text-center cursor-pointer rounded-xl bg-green-50">
+          <p id="upload-placeholder" class="text-gray-600">Drag & Drop or Click to Upload Image</p>
+          <input type="file" id="file-input" class="hidden" accept="image/*" capture="environment">
+          <div class="mt-3 text-sm text-gray-500">Or use your device camera (mobile-friendly)</div>
+        </div>
+
+        <!-- Preview -->
+        <div id="image-preview-container" class="hidden mt-4 text-center">
+          <img id="image-preview" class="rounded-lg shadow-md max-h-72 mx-auto" alt="preview">
+          <div class="flex justify-between mt-3">
+            <button id="remove-image-button" class="bg-red-500 text-white px-4 py-2 rounded-lg" data-i18n="ui.remove">Remove</button>
+            <div class="flex gap-2">
+              <button id="download-report" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg" data-i18n="ui.downloadReport">Download Report</button>
+              <button id="analyze-button" class="bg-green-500 text-white px-4 py-2 rounded-lg" data-i18n="ui.analyze">Analyze</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="hidden text-center mt-4">⏳ <span id="loading-text">Analyzing...</span></div>
+
+        <!-- Result -->
+        <div id="result-container" class="hidden mt-4 p-4 border rounded-lg bg-gray-50">
+          <div id="result-content"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Tips & FAQ -->
+  <section id="tips" class="py-12 max-w-4xl mx-auto px-4">
+    <h3 class="text-2xl font-bold text-green-700 mb-4 text-center" id="tips-title">Practical Tips for Farmers</h3>
+    <ul class="list-disc list-inside text-gray-700 space-y-2">
+      <li id="tip-1">Inspect leaves weekly to catch disease early.</li>
+      <li id="tip-2">Ensure good drainage and avoid overwatering.</li>
+      <li id="tip-3">Use recommended organic sprays and rotate crops.</li>
+      <li id="tip-4">Keep a photo log: it helps when consulting experts.</li>
+    </ul>
+  </section>
+
+  <!-- HISTORY (localStorage) -->
+  <section id="history" class="py-12 max-w-4xl mx-auto px-4">
+    <h3 class="text-2xl font-bold text-green-700 mb-4 text-center" data-i18n="ui.historyTitle">Analysis History</h3>
+    <div id="history-list" class="bg-white p-4 rounded-xl shadow text-sm min-h-[80px]">No history yet.</div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-green-700 text-white py-6 mt-8 text-center">
+    &copy; 2025 PlantAI. Built for farmers. Simple remedies, stronger harvests.
+  </footer>
+
+<script>
+/* ---------------- CONFIG ---------------- */
+const API_ENDPOINT = "http://127.0.0.1:5000/predict"; // change to deployed URL if needed
+
+/* ---------------- DOM ---------------- */
+const dropZone = document.getElementById('image-uploader');
+const fileInput = document.getElementById('file-input');
+const imagePreviewContainer = document.getElementById('image-preview-container');
+const imagePreview = document.getElementById('image-preview');
+const analyzeButton = document.getElementById('analyze-button');
+const removeImageButton = document.getElementById('remove-image-button');
+const loader = document.getElementById('loader');
+const resultContainer = document.getElementById('result-container');
+const resultContent = document.getElementById('result-content');
+const historyList = document.getElementById('history-list');
+const openHistoryBtn = document.getElementById('open-history');
+const downloadReportBtn = document.getElementById('download-report');
+const langSelect = document.getElementById('lang-select');
+
+/* ---------------- TRANSLATIONS ----------------
+   Frontend translations for UI and several classes.
+   Add more class keys exactly as your model returns (or as the backend's simplified key returns).
+*/
+const translations = {
+  en: {
+    ui: {
+      analyze: "Analyze",
+      history: "History",
+      historyTitle: "Analysis History",
+      tipsTitle: "Practical Tips for Farmers",
+      upload: "Drag & Drop or Click to Upload Image",
+      remove: "Remove",
+      downloadReport: "Download Report",
+      confidence: "Confidence",
+      noHistory: "No history yet.",
+      noResult: "No analysis result to download.",
+      recommendations: "Recommendations"
+    },
+    classes: {
+      "Healthy": {
+        name: "Healthy",
+        description: "The plant looks healthy (class: Healthy).",
+        recommendations: [
+          "Continue routine care and monitoring.",
+          "Avoid overwatering and ensure good light."
+        ]
+      },
+      "Early_blight": {
+        name: "Early Blight",
+        description: "Early blight affects leaves and causes spots.",
+        recommendations: [
+          "Remove infected leaves.",
+          "Use recommended fungicide as per label.",
+          "Rotate crops next season."
+        ]
+      }
+    },
+    generic: {
+      healthy: {
+        description: "The plant looks healthy.",
+        recommendations: [
+          "Continue routine care and monitoring.",
+          "Avoid overwatering."
+        ]
+      },
+      disease: {
+        description: "Predicted disease detected. Please inspect and consider local extension services.",
+        recommendations: [
+          "Isolate affected plants.",
+          "Remove severely infected leaves and dispose safely.",
+          "Consult local extension or plant pathology resources for treatment."
+        ]
+      }
+    }
+  },
+
+  te: {
+    ui: {
+      analyze: "విశ్లేషించు",
+      history: "చరిత్ర",
+      historyTitle: "విశ్లేషణ చరిత్ర",
+      tipsTitle: "రైతుల కోసం ఆచరణాత్మక సూచనలు",
+      upload: "డ్రాగ్ చేసి వదలండి లేదా చిత్రాన్ని అప్లోడ్ చేయండి",
+      remove: "తొలగించు",
+      downloadReport: "రిపోర్ట్ డౌన్లోడ్ చేయండి",
+      confidence: "నమ్మక స్థాయి",
+      noHistory: "ఇప్పటి వరకు చరిత్ర లేదు.",
+      noResult: "డౌన్లోడ్ చేయడానికి ఫలితం లేదు.",
+      recommendations: "సూచనలు"
+    },
+    classes: {
+      "Healthy": {
+        name: "ఆరోగ్యంగా ఉంది",
+        description: "మొక్క ఆరోగ్యంగా కనిపిస్తోంది (వర్గం: Healthy).",
+        recommendations: [
+          "సాధారణ సంరక్షణ కొనసాగించండి.",
+          "అధిక నీరుపోసే దాన్ని నివారించండి."
+        ]
+      },
+      "Early_blight": {
+        name: "అరంభ బ్లైట్",
+        description: "ఈ వ్యాధి ఆకుల్లో మచ్చలు కలిగిస్తుంది.",
+        recommendations: [
+          "భాగాలైన ఆకులను తీసివేయండి.",
+          "లేబుల్ ప్రకారం ఫంగిసైడ్ వాడండి.",
+          "తలుపులుగా పంటను మార్చండి."
+        ]
+      }
+    },
+    generic: {
+      healthy: {
+        description: "మొక్క ఆరోగ్యంగా ఉంది.",
+        recommendations: [
+          "సాధారణ సంరక్షణ కొనసాగించండి.",
+          "అధిక నీరు ఇవ్వవద్దు."
+        ]
+      },
+      disease: {
+        description: "వ్యాధి సూచనలు కనిపించాయి. దయచేసి పరిశీలించండి మరియు స్థానిక నిపుణులను సంప్రదించండి.",
+        recommendations: [
+          "ప్రభావిత మొక్కలను వేరుచేసి ఉంచండి.",
+          "భారీగా పాడైన ఆకులను తొలగించి నాశనం చేయండి.",
+          "చికిత్స కోసం స్థానిక వ్యవసాయ సేవలను సంప్రదించండి."
+        ]
+      }
+    }
+  },
+
+  ta: {
+    ui: {
+      analyze: "பகுப்பாய்வு செய்",
+      history: "வரலாறு",
+      historyTitle: "பகுப்பாய்வு வரலாறு",
+      tipsTitle: "விவசாயிகளுக்கான நடைமுறை குறிப்புகள்",
+      upload: "படத்தை இழுத்து விடவும் அல்லது பதிவேற்றவும்",
+      remove: "அகற்று",
+      downloadReport: "அறிக்கையை பதிவிறக்கு",
+      confidence: "நம்பிக்கை",
+      noHistory: "இப்பொழுது வரலாறு இல்லை.",
+      noResult: "பதிவிறக்கத்திற்கான முடிவு இல்லை.",
+      recommendations: "பரிந்துரைகள்"
+    },
+    classes: {
+      "Healthy": {
+        name: "ஆரோக்யம்",
+        description: "செடி ஆரோக்கிய நிலையில் உள்ளது (வகுப்பு: Healthy).",
+        recommendations: [
+          "தொடர்ந்த பராமரிப்பை செய்யவும்.",
+          "அதிக நீரைத் தவிர்க்கவும்."
+        ]
+      }
+    },
+    generic: {
+      healthy: {
+        description: "செடி ஆரோக்கியமாக தெரிகிறது.",
+        recommendations: [
+          "பராமரிப்பை தொடரவும்.",
+          "அதிக நீரை தவிர்க்கவும்."
+        ]
+      },
+      disease: {
+        description: "நோய்க் குறியீடுகள் கண்டெடுக்கப்பட்டன. தயவு செய்து பரிசீலிக்கவும் மற்றும் உள்ளூரான உதவிகளைக் கலந்தாலோசிக்கவும்.",
+        recommendations: [
+          "பாதிக்கப்பட்ட தாவரங்களை தனியாக வைக்கவும்.",
+          "மிக அதிகமாக பாதிக்கப்பட்ட இலைகளை அகற்றி அழிக்கவும்.",
+          "சிகிச்சைக்காக உள்ளூராட்சி விவசாய உதவியை அணுகவும்."
+        ]
+      }
+    }
+  },
+
+  hi: {
+    ui: {
+      analyze: "विश्लेषण करें",
+      history: "इतिहास",
+      historyTitle: "विश्लेषण इतिहास",
+      tipsTitle: "किसानों के लिए व्यावहारिक सुझाव",
+      upload: "खींचें और छोड़ें या छवि अपलोड करें",
+      remove: "हटाएँ",
+      downloadReport: "रिपोर्ट डाउनलोड करें",
+      confidence: "विश्वास",
+      noHistory: "अभी तक कोई इतिहास नहीं।",
+      noResult: "डाउनलोड करने के लिए परिणाम नहीं है।",
+      recommendations: "सिफारिशें"
+    },
+    classes: {
+      "Healthy": {
+        name: "स्वस्थ",
+        description: "पौधा स्वस्थ दिखाई दे रहा है (वर्ग: Healthy).",
+        recommendations: [
+          "नियमित देखभाल जारी रखें।",
+          "अत्यधिक पानी से बचें।"
+        ]
+      }
+    },
+    generic: {
+      healthy: {
+        description: "पौधा स्वस्थ दिखता है।",
+        recommendations: [
+          "नियमित देखभाल जारी रखें।",
+          "अधिक पानी न दें।"
+        ]
+      },
+      disease: {
+        description: "संभावित रोग का पता चला है। कृपया निरीक्षण करें और स्थानीय विशेषज्ञों से सलाह लें।",
+        recommendations: [
+          "प्रभावित पौधों को अलग करें।",
+          "भाज्य रूप से संक्रमित पत्तियों को हटाकर नष्ट करें।",
+          "उपचार के लिए स्थानीय कृषि सलाहकार से संपर्क करें।"
+        ]
+      }
+    }
+  }
+};
+
+/* ---------------- state ---------------- */
+let currentLang = localStorage.getItem('plantai_lang') || navigator.language.split('-')[0] || 'en';
+if (!['en','te','ta','hi'].includes(currentLang)) currentLang = 'en';
+langSelect.value = currentLang;
+
+let lastServerResult = null; // keep raw server response for re-localization on lang change
+
+/* ---------------- Helpers ---------------- */
+function show(el){ el.classList.remove('hidden'); }
+function hide(el){ el.classList.add('hidden'); }
+
+function t(key, fallback) {
+  const parts = key.split('.');
+  const langPack = translations[currentLang] || translations['en'];
+  let cur = langPack;
+  for (const p of parts) {
+    if (!cur || typeof cur !== 'object' || !(p in cur)) {
+      // fallback to english complete key if available
+      const enPack = translations['en'] || {};
+      let encur = enPack;
+      for (const q of parts) {
+        if (!encur || typeof encur !== 'object' || !(q in encur)) {
+          return fallback !== undefined ? fallback : key;
+        }
+        encur = encur[q];
+      }
+      return encur;
+    }
+    cur = cur[p];
+  }
+  return cur;
+}
+
+function applyTranslationsToUI() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val) el.textContent = val;
+  });
+  document.getElementById('upload-placeholder').textContent = t('ui.upload', 'Drag & Drop or Click to Upload Image');
+  document.getElementById('analyze-title').textContent = t('ui.analyze', 'Analyze a Leaf');
+  document.getElementById('tips-title').textContent = t('ui.tipsTitle', 'Practical Tips for Farmers');
+  const tips = t('tips', null);
+  if (Array.isArray(tips) && tips.length) {
+    tips.forEach((it, idx) => {
+      const el = document.getElementById('tip-'+(idx+1));
+      if (el) el.textContent = it;
+    });
+  }
+}
+
+/* ---------------- Drag & Click upload ---------------- */
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', handleFileSelect);
+
+function handleFileSelect(){
+  const file = fileInput.files[0];
+  if (file && file.type.startsWith('image/')){
+    const reader = new FileReader();
+    reader.onload = e => {
+      imagePreview.src = e.target.result;
+      hide(dropZone);
+      show(imagePreviewContainer);
+      hide(resultContainer);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+['dragenter','dragover'].forEach(evt => {
+  dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('ring-2','ring-green-400'); });
+});
+['dragleave','drop'].forEach(evt => {
+  dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.remove('ring-2','ring-green-400'); });
+});
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  const dt = e.dataTransfer;
+  if (dt && dt.files && dt.files[0]){
+    fileInput.files = dt.files;
+    handleFileSelect();
+  }
+});
+
+/* ---------------- Remove ---------------- */
+removeImageButton.addEventListener('click', () => {
+  fileInput.value = '';
+  show(dropZone);
+  hide(imagePreviewContainer);
+  hide(resultContainer);
+});
+
+/* ---------------- Analysis ---------------- */
+analyzeButton.addEventListener('click', async () => {
+  if (!fileInput.files[0]) return alert(t('ui.upload', 'Select an image first!'));
+  hide(resultContainer);
+  show(loader);
+
+  const formData = new FormData();
+  formData.append('file', fileInput.files[0]);
+
+  try{
+    const res = await fetch(`${API_ENDPOINT}?lang=${currentLang}`, { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('Server error: ' + res.status);
+    const data = await res.json();
+    console.log("Server response:", data);
+    hide(loader);
+    show(resultContainer);
+
+    lastServerResult = data; // store raw result for re-localization
+
+    renderResultLocalized(data);
+
+    // Save to local history (localized name will be saved inside renderResultLocalized)
+  }catch(err){
+    hide(loader);
+    console.error(err);
+    alert('Error analyzing image. Make sure backend is running and CORS allows requests.');
+  }
+});
+
+function renderResultLocalized(serverData) {
+  // serverData should include diseaseName and diseaseName_simplified
+  const serverIsHealthy = serverData.isHealthy === true;
+  const serverDiseaseName = serverData.diseaseName || (serverIsHealthy ? 'Healthy' : 'Unknown');
+  const serverSimplified = serverData.diseaseName_simplified || serverDiseaseName;
+  const serverConfidence = typeof serverData.confidence === 'number' ? (serverData.confidence * 100).toFixed(1) : (serverData.confidence || 'N/A');
+  const serverDescription = serverData.description || '';
+  const serverRecommendations = Array.isArray(serverData.recommendations) ? serverData.recommendations : [];
+
+  // Try to find translation using simplified key first, then full name, then case-insensitive
+  const classPack = (translations[currentLang] && translations[currentLang].classes) || {};
+  let localizedName = null;
+  let localizedDescription = null;
+  let localizedRecommendations = null;
+
+  if (serverSimplified in classPack) {
+    const c = classPack[serverSimplified];
+    localizedName = c.name || serverDiseaseName;
+    localizedDescription = c.description || serverDescription;
+    localizedRecommendations = Array.isArray(c.recommendations) ? c.recommendations : serverRecommendations;
+  } else if (serverDiseaseName in classPack) {
+    const c = classPack[serverDiseaseName];
+    localizedName = c.name || serverDiseaseName;
+    localizedDescription = c.description || serverDescription;
+    localizedRecommendations = Array.isArray(c.recommendations) ? c.recommendations : serverRecommendations;
+  } else {
+    // case-insensitive search
+    const lower = serverSimplified.toLowerCase();
+    for (const k of Object.keys(classPack)) {
+      if (k.toLowerCase() === lower) {
+        const c = classPack[k];
+        localizedName = c.name || serverDiseaseName;
+        localizedDescription = c.description || serverDescription;
+        localizedRecommendations = Array.isArray(c.recommendations) ? c.recommendations : serverRecommendations;
+        break;
+      }
+    }
+  }
+
+  // fallback to generic localized messages
+  if (!localizedName) {
+    localizedName = serverDiseaseName;
+    if (serverIsHealthy) {
+      localizedDescription = t('generic.healthy.description', serverDescription || 'The plant looks healthy.');
+      localizedRecommendations = t('generic.healthy.recommendations', null) || serverRecommendations;
+    } else {
+      localizedDescription = t('generic.disease.description', serverDescription || 'Predicted disease detected.');
+      localizedRecommendations = t('generic.disease.recommendations', null) || serverRecommendations;
+    }
+  }
+
+  if (!Array.isArray(localizedRecommendations)) localizedRecommendations = serverRecommendations;
+
+  // Render
+  resultContent.innerHTML = `
+    <div class="flex items-center justify-between">
+      <h3 class="text-xl font-bold ${serverIsHealthy ? 'text-green-600' : 'text-red-600'}">${localizedName}</h3>
+      <div class="text-sm text-gray-600">${t('ui.confidence','Confidence')}: ${serverConfidence}%</div>
+    </div>
+    <p class="mt-2 text-sm text-gray-700">${localizedDescription}</p>
+    <h4 class="font-semibold mt-3">${t('ui.recommendations','Recommendations')}:</h4>
+    <ul class="list-disc list-inside text-sm">${localizedRecommendations.map(r => `<li>✅ ${r}</li>`).join('')}</ul>
+  `;
+
+  // Save to local history (store localized name + localized recommendations)
+  saveHistory({
+    timestamp: new Date().toISOString(),
+    diseaseName: localizedName,
+    confidence: serverConfidence,
+    recommendations: localizedRecommendations
+  });
+}
+
+/* ---------------- History (localStorage) ---------------- */
+function saveHistory(item){
+  const key = 'plantai_history_v1';
+  const hist = JSON.parse(localStorage.getItem(key) || '[]');
+  hist.unshift(item);
+  localStorage.setItem(key, JSON.stringify(hist.slice(0,50))); // keep last 50
+  renderHistory();
+}
+
+function renderHistory(){
+  const key = 'plantai_history_v1';
+  const hist = JSON.parse(localStorage.getItem(key) || '[]');
+  if (!hist.length){
+    historyList.innerHTML = t('ui.noHistory','No history yet.');
+    return;
+  }
+  historyList.innerHTML = hist.map(h => {
+    const tstamp = new Date(h.timestamp).toLocaleString();
+    return `<div class="p-3 border-b last:border-b-0"><div class="flex justify-between"><div class="font-medium">${h.diseaseName}</div><div class="text-xs text-gray-500">${tstamp}</div></div><div class="text-xs text-gray-600">${t('ui.confidence','Confidence')}: ${h.confidence}%</div></div>`;
+  }).join('');
+}
+
+openHistoryBtn && openHistoryBtn.addEventListener('click', () => {
+  window.location.hash = '#history';
+  renderHistory();
+});
+
+/* ---------------- Download report ---------------- */
+downloadReportBtn && downloadReportBtn.addEventListener('click', () => {
+  const latest = JSON.parse(localStorage.getItem('plantai_history_v1') || '[]')[0];
+  if (!latest) return alert(t('ui.noResult','No analysis result to download.'));
+  const content = `PlantAI Report\nDate: ${new Date(latest.timestamp).toLocaleString()}\nDisease: ${latest.diseaseName}\nConfidence: ${latest.confidence}%\n${t('ui.recommendations','Recommendations')}:\n- ${latest.recommendations ? latest.recommendations.join('\n- ') : 'None'}`;
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `plantai_report_${new Date(latest.timestamp).toISOString().slice(0,19).replace(/[:T]/g,'-')}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+/* ---------------- Smooth scroll for nav anchors ---------------- */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target){ e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+
+/* ---------------- Language change handler & initial render ---------------- */
+langSelect.addEventListener('change', () => {
+  currentLang = langSelect.value;
+  localStorage.setItem('plantai_lang', currentLang);
+  applyTranslationsToUI();
+  renderHistory();
+  // if we've got a last result, re-render it localized in the new language
+  if (lastServerResult) {
+    renderResultLocalized(lastServerResult);
+  }
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  applyTranslationsToUI();
+  renderHistory();
+});
+</script>
+</body>
+</html>
